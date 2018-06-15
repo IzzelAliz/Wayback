@@ -1,0 +1,11 @@
+name: Wayback
+version: @version@
+main: com.ilummc.wayback.Wayback
+softdepend: [TabooLib]
+authors: [IzzelAliz]
+description: Wayback - Backup restore plugin
+website: https://github.com/IzzelAliz/Wayback
+commands:
+  wayback:
+    usage: /wayback
+    description: /wayback

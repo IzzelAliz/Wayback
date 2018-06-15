@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: net.sf.sevenzipjbinding:sevenzipjbinding:9.20-2.00beta">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.sf.sevenzipjbinding/sevenzipjbinding/9.20-2.00beta/955419d9a6fc9608052226964cb0ecf8f59f91f9/sevenzipjbinding-9.20-2.00beta.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.sf.sevenzipjbinding/sevenzipjbinding/9.20-2.00beta/cbb385bb3fa474ec9a5bd3b0b73da029822c0fde/sevenzipjbinding-9.20-2.00beta-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

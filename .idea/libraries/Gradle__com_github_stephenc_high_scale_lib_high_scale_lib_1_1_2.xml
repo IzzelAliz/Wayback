@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: com.github.stephenc.high-scale-lib:high-scale-lib:1.1.2">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.stephenc.high-scale-lib/high-scale-lib/1.1.2/e3fbb2a95269eb8049bc72a3b0ce3208378a30f5/high-scale-lib-1.1.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.stephenc.high-scale-lib/high-scale-lib/1.1.2/ec20fa0267534f4d48f2fba02bbf091997c22fb7/high-scale-lib-1.1.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

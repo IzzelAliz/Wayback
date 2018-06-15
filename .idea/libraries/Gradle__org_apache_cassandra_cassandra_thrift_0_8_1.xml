@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: org.apache.cassandra:cassandra-thrift:0.8.1">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.cassandra/cassandra-thrift/0.8.1/48de190f7c93435f9b2a03b25b50eff64abb0e1b/cassandra-thrift-0.8.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.cassandra/cassandra-thrift/0.8.1/6f647b42cb833b1b1358e3c7989235999e9d7697/cassandra-thrift-0.8.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

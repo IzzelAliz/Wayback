@@ -1,0 +1,76 @@
+pool_size: 8
+storages:
+  local_storage:
+    ==: LocalStorage
+    root:
+      - './WaybackBackups'
+  ftp_server:
+    ==: FtpStorage
+    url: ftp://127.0.0.1:22
+    user: test
+    password: test
+# onedrive:
+#   ==: OneDrive
+compressor:
+  - ==: zip
+    level: 9
+    encrypt: false
+    password: example
+  - ==: 7z
+    encrypt: false
+    password: example
+    level: 7
+backups:
+  file_backup:
+    ==: File
+    root: './'
+    excludes:
+      - 'WaybackBackups'
+      - 'logs'
+    skip_large_file: true
+    large_file: 64.000
+    incremental: true
+  sql_backup:
+    ==: SQL
+    jdbcUrl: 'jdbc:mysql://127.0.0.1/db'
+    user: root
+    password: root
+    incremental: true
+policies:
+  clean_oldest:
+    ==: CleanOldest
+    target: local_storage
+  clean_latest:
+    ==: CleanLatest
+    target: local_storage
+  abandon:
+    ==: Abandon
+  retry3:
+    ==: Retry
+    max_retry: 3
+    retry_period: 60
+  retry1:
+    ==: Retry
+    max_retry: 1
+    retry_period: 1
+tasks:
+  backup_file:
+    ==: Transfer
+    from: file_backup
+    to: local_storage
+    no_enough_space: [clean_oldest, retry1]
+  # next: upload_ftp
+  upload_ftp:
+    ==: Transfer
+    from: local_storage
+    to: ftp_server
+    no_enough_space: [abandon]
+    connection_fail: [retry3]
+    on_complete: [clean_latest]
+schedules:
+  timer_backup:
+    ==: Period
+    time_unit: MINUTES
+    initial: 60
+    period: 60
+    task: backup_file
