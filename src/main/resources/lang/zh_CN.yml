@@ -24,6 +24,8 @@ DECRYPTED: '&a配置文件解密成功'
 CONVERT_TO_UNENCRYPTED: '&a配置文件现在以明文存储'
 CONVERT_TO_ENCRYPTED: '&a配置文件现在以 AES256 加密存储'
 INPUT_PASSWORD: '请添加一个参数作为密码'
+AWAIT_TERMINATE: '有任务正在执行，等待执行完毕'
+TERMINATE_ERROR: '停止任务时出现异常，最后一次备份可能失效'
 TASKS:
   SCHEDULED_BACKUP_NAME: '计划备份任务'
   METRICS_NAME: 'bStats 数据统计'
@@ -46,8 +48,14 @@ TASKS:
   PERIOD_TASK_FORMAT: '&b({0}) {1} &f计划于 {2} 后运行，上次运行于 {3} 前'
   PERIOD_TASK_FORMAT2: '&b({0}) {1} &f计划于 {2} 后运行'
   FILE_LOCAL_TRANSFER_NAME: '本地文件备份'
+  FTP_UPLOAD_NAME: '上传至 FTP'
 FILE_LOCAL:
   WAIT_RUNNING: '等待运行'
   CREATING_FILE_MAP: '正在统计文件更改 ...'
   COMPRESSING: '正在生成 {0} 个备份文件 ...'
   ZIPPING_FILE: '正在压缩 {0}'
+  SECURITY_DENIED: '设置的根目录 {0} 没有读写权限，该目录将不可用'
+FTP:
+  FTP_INIT_ERR: 'FTP 初始化失败：{0}'
+  NO_PERMISSION: '指定的目录没有权限进行读写！FTP 将不可用'
+  UPLOADING_FILE: '正在上传 {0} {1} / {2}'

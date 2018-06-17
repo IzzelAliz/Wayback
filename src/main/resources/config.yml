@@ -4,11 +4,15 @@ storages:
     ==: LocalStorage
     root:
       - './WaybackBackups'
-  ftp_server:
-    ==: FtpStorage
-    url: ftp://127.0.0.1:22
-    user: test
-    password: test
+# ftp_server:
+#   ==: FtpStorage
+#   host: 127.0.0.1
+#   port: 22
+#   ftps: false
+#   ftpes: false
+#   user: test
+#   password: test
+#   root: '/usr/share/wayback-backups'
 # onedrive:
 #   ==: OneDrive
 compressor:
@@ -16,10 +20,6 @@ compressor:
     level: 9
     encrypt: false
     password: example
-  - ==: 7z
-    encrypt: false
-    password: example
-    level: 7
 backups:
   file_backup:
     ==: File
@@ -64,8 +64,7 @@ tasks:
     ==: Transfer
     from: local_storage
     to: ftp_server
-    no_enough_space: [abandon]
-    connection_fail: [retry3]
+    connection_fail: [abandon]
     on_complete: [clean_latest]
 schedules:
   timer_backup:

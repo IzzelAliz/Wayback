@@ -20,8 +20,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Gradle: org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Gradle: it.sauronsoftware:ftp4j:1.7.2" level="project" />
-    <orderEntry type="library" name="Gradle: org.tukaani:xz:1.8" level="project" />
-    <orderEntry type="library" name="Gradle: net.sf.sevenzipjbinding:sevenzipjbinding:9.20-2.00beta" level="project" />
     <orderEntry type="library" name="Gradle: net.lingala.zip4j:zip4j:1.3.2" level="project" />
     <orderEntry type="library" name="Gradle: com.github.Bkm016:TabooLib:master-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Gradle: org.apache.cassandra:cassandra-all:0.8.1" level="project" />

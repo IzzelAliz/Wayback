@@ -10,7 +10,7 @@ import org.bukkit.command.CommandSender;
 import java.text.NumberFormat;
 import java.time.Duration;
 
-class WaybackCommand {
+public class WaybackCommand {
 
     @Handler(value = "conf", descriptor = "COMMANDS.CONF_USAGE")
     private static void conf(String[] arg, CommandSender sender) {
@@ -31,16 +31,20 @@ class WaybackCommand {
         }
     }
 
+    public static void printRunning() {
+        WaybackSchedules.instance().getRunning().forEach(schedule -> TLocale.sendToConsole(
+                "TASKS.RUNNING_TASK_FORMAT", schedule.id(), schedule.name(),
+                String.valueOf(NumberFormat.getPercentInstance().format(schedule.progress())),
+                Duration.ofMillis(schedule.eta()).toString().substring(2).toLowerCase()));
+    }
+
     @Handler(value = "task", descriptor = "COMMANDS.TASK_USAGE")
     private static void task(String[] arg, CommandSender sender) {
         if (arg.length == 0) throw new NullPointerException(TLocale.asString("COMMANDS.ILLEGAL_ARGUMENT"));
         else switch (arg[0]) {
             case "list":
                 TLocale.sendTo(sender, "TASKS.LIST", String.valueOf(WaybackConf.getConf().getPoolSize()));
-                WaybackSchedules.instance().getRunning().forEach(schedule -> TLocale.sendTo(sender,
-                        "TASKS.RUNNING_TASK_FORMAT", schedule.id(), schedule.name(),
-                        String.valueOf(NumberFormat.getPercentInstance().format(schedule.progress())),
-                        Duration.ofMillis(schedule.eta()).toString().substring(2).toLowerCase()));
+                printRunning();
                 WaybackSchedules.instance().getPending().stream()
                         .filter(task -> !task.isRunning()).forEach(task -> {
                     if (task instanceof DelayedSchedule) TLocale.sendTo(sender, "TASKS.DELAYING_TASK_FORMAT",

@@ -36,6 +36,13 @@ class FullBackupFileLocalTransferTask implements Executable {
 
     private long count = 0;
 
+    private Task next;
+
+    FullBackupFileLocalTransferTask next(Task task) {
+        this.next = task;
+        return this;
+    }
+
     FullBackupFileLocalTransferTask(FileBackup backup, LocalStorage storage, List<Policy> noEnoughSpace, List<Policy> complete) {
         this.backup = backup;
         this.storage = storage;
@@ -51,7 +58,7 @@ class FullBackupFileLocalTransferTask implements Executable {
         JsonObject object = backup.makeFileInfo();
         progress += 0.1;
 
-       // ensure enough disk space
+        // ensure enough disk space
         WrapLong size = new WrapLong(0), count = new WrapLong(0);
         sizeOf(size, count, object);
         if (storage.space() < size.get())
@@ -83,6 +90,7 @@ class FullBackupFileLocalTransferTask implements Executable {
             policy.accept(this);
         }
         reset();
+        if (next != null) next.create().schedule().addToQueue();
     }
 
     private void reset() {

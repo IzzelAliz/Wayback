@@ -38,6 +38,13 @@ class IncrementalFileLocalTransferTask implements Executable {
 
     private long count = 0;
 
+    private Task next;
+
+    IncrementalFileLocalTransferTask next(Task task) {
+        this.next = task;
+        return this;
+    }
+
     IncrementalFileLocalTransferTask(FileBackup backup, LocalStorage storage, List<Policy> noEnoughSpace, List<Policy> complete) {
         this.backup = backup;
         this.storage = storage;
@@ -88,6 +95,7 @@ class IncrementalFileLocalTransferTask implements Executable {
             policy.accept(this);
         }
         reset();
+        if (next != null) next.create().schedule().addToQueue();
     }
 
     private void reset() {
@@ -112,13 +120,14 @@ class IncrementalFileLocalTransferTask implements Executable {
     @SuppressWarnings("unchecked")
     private void sizeOf(WrapLong size, WrapLong count, JsonObject object, Map<String, Object> diff) {
         for (Map.Entry<String, JsonElement> entry : object.entrySet()) {
-            if (entry.getValue().isJsonArray()) {
-                if (diff.containsKey(entry.getKey())) {
+            if (diff.containsKey(entry.getKey()) && diff.get(entry.getKey()) != Breakpoint.Change.D) {
+                if (entry.getValue().isJsonArray()) {
                     count.increment();
                     size.increment(entry.getValue().getAsJsonArray().get(1).getAsLong());
+                } else {
+                    sizeOf(size, count, entry.getValue().getAsJsonObject(), (Map<String, Object>) diff.get(entry.getKey()));
                 }
-            } else
-                sizeOf(size, count, entry.getValue().getAsJsonObject(), (Map<String, Object>) diff.get(entry.getKey()));
+            }
         }
     }
 

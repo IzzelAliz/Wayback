@@ -2,6 +2,7 @@ package com.ilummc.wayback.storage;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonParser;
+import com.ilummc.tlib.resources.TLocale;
 import com.ilummc.wayback.data.Breakpoint;
 import com.ilummc.wayback.util.Files;
 import com.ilummc.wayback.util.Jsons;
@@ -14,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class LocalStorage implements ConfigurationSerializable, Storage {
@@ -31,8 +33,17 @@ public class LocalStorage implements ConfigurationSerializable, Storage {
     }
 
     @Override
-    public void init() {
-        root.stream().map(File::new).forEach(File::mkdirs);
+    public boolean init() {
+        root = root.stream().filter(s -> {
+            try {
+                new File(s).mkdirs();
+                return true;
+            } catch (SecurityException e) {
+                TLocale.Logger.warn("FILE_LOCAL.SECURITY_DENIED");
+                return false;
+            }
+        }).collect(Collectors.toList());
+        return true;
     }
 
     @Override
@@ -45,8 +56,20 @@ public class LocalStorage implements ConfigurationSerializable, Storage {
         return File.createTempFile("Wayback-" + UUID.randomUUID().toString(), suffix, base);
     }
 
-    @Override
-    public Optional<Breakpoint> findLast() {
+    public List<File> list(String name) {
+        return root.stream()
+                .map(File::new)
+                .filter(f -> f.isDirectory() && f.listFiles() != null)
+                .flatMap(f -> Arrays.stream(Objects.requireNonNull(f.listFiles())))
+                .filter(f -> f.getName().startsWith(name))
+                .collect(Collectors.toList());
+    }
+
+    public Optional<String> latestName() {
+        return latestZip().flatMap(file -> Optional.of(file.getName().substring(0, file.getName().lastIndexOf('.'))));
+    }
+
+    public Optional<File> latestZip() {
         return root.stream()
                 .map(File::new)
                 .filter(f -> f.isDirectory() && f.listFiles() != null)
@@ -55,7 +78,12 @@ public class LocalStorage implements ConfigurationSerializable, Storage {
                 .map(f -> Pair.of(f, LocalDateTime.parse(f.getName().replace('_', ':')
                         .substring(0, f.getName().lastIndexOf('.')))))
                 .max(Comparator.comparing(Pair::getValue))
-                .flatMap(p -> Optional.of(new JsonParser().parse(Files.toJson(p.getKey()))))
+                .flatMap(pair -> Optional.of(pair.getKey()));
+    }
+
+    @Override
+    public Optional<Breakpoint> findLast() {
+        return latestZip().flatMap(file -> Optional.of(new JsonParser().parse(Files.toJson(file))))
                 .flatMap(element -> Optional.of(Jsons.mapTo(element.getAsJsonObject(), Breakpoint.class)));
     }
 

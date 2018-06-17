@@ -37,7 +37,7 @@ public class ZipCompressor implements ConfigurationSerializable, Compressor {
 
     @Override
     public Archive createArchive(File base, Storage storage) throws Exception {
-        return new GzipArchive(storage.createTempFile(base, ".zip"));
+        return new ZipArchive(storage.createTempFile(base, ".zip"));
     }
 
     @Override
@@ -45,7 +45,7 @@ public class ZipCompressor implements ConfigurationSerializable, Compressor {
         return "zip";
     }
 
-    private class GzipArchive implements Archive {
+    private class ZipArchive implements Archive {
 
         private ZipFile zipFile;
 
@@ -53,7 +53,7 @@ public class ZipCompressor implements ConfigurationSerializable, Compressor {
 
         private File file;
 
-        private GzipArchive(File file) throws Exception {
+        private ZipArchive(File file) throws Exception {
             this.file = file;
             if (file.exists()) file.delete();
             zipFile = new ZipFile(file);

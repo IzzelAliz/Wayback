@@ -10,9 +10,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 @Dependency(type = Dependency.Type.LIBRARY, maven = "it.sauronsoftware:ftp4j:1.7.2", mavenRepo = "https://bkm016.github.io/TabooLib/repo")
-@Dependency(type = Dependency.Type.LIBRARY, maven = "org.tukaani:xz:1.8")
-@Dependency(type = Dependency.Type.LIBRARY, maven = "net.sf.sevenzipjbinding:sevenzipjbinding:9.20-2.00beta")
-@Dependency(type = Dependency.Type.LIBRARY, maven = "net.sf.sevenzipjbinding:sevenzipjbinding-all-platforms:9.20-2.00beta")
+//@Dependency(type = Dependency.Type.LIBRARY, maven = "net.sf.sevenzipjbinding:sevenzipjbinding:9.20-2.00beta")
+//@Dependency(type = Dependency.Type.LIBRARY, maven = "net.sf.sevenzipjbinding:sevenzipjbinding-all-platforms:9.20-2.00beta")
 @Dependency(type = Dependency.Type.LIBRARY, maven = "commons-collections:commons-collections:3.2.2")
 @Dependency(type = Dependency.Type.LIBRARY, maven = "net.lingala.zip4j:zip4j:1.3.2")
 public final class Wayback extends JavaPlugin {

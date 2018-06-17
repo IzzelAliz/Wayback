@@ -6,10 +6,10 @@ import com.ilummc.tlib.resources.TLocale;
 import com.ilummc.wayback.backups.Backup;
 import com.ilummc.wayback.compress.Compressor;
 import com.ilummc.wayback.compress.ZipCompressor;
-import com.ilummc.wayback.storage.Storage;
 import com.ilummc.wayback.policy.Policy;
 import com.ilummc.wayback.schedules.PreloadSchedule;
 import com.ilummc.wayback.schedules.ProgressedSchedule;
+import com.ilummc.wayback.storage.Storage;
 import com.ilummc.wayback.tasks.Task;
 import com.ilummc.wayback.util.Crypto;
 import org.bukkit.command.CommandSender;
@@ -38,6 +38,8 @@ public class WaybackConf {
 
     private Map<String, ProgressedSchedule> schedules;
 
+    private Map<String, Storage> storages;
+
     private FileConfiguration configuration;
 
     public int getPoolSize() {
@@ -45,12 +47,12 @@ public class WaybackConf {
     }
 
     public Storage getStorage(String name) {
-        return (Storage) configuration.getConfigurationSection("storages").get(name);
+        return name != null ? storages.get(name) : null;
     }
 
     @SuppressWarnings("unchecked")
     public Map<String, Storage> getStorages() {
-        return ((Map<String, Storage>) ((Map) configuration.getConfigurationSection("storages").getValues(false)));
+        return storages == null ? ((Map<String, Storage>) ((Map) configuration.getConfigurationSection("storages").getValues(false))) : storages;
     }
 
     public Compressor getAvailableCompressor() {
@@ -63,7 +65,7 @@ public class WaybackConf {
     }
 
     public Backup getBackup(String name) {
-        return (Backup) configuration.getConfigurationSection("backups").get(name);
+        return name != null ? (Backup) configuration.getConfigurationSection("backups").get(name) : null;
     }
 
     @SuppressWarnings("unchecked")
@@ -72,7 +74,7 @@ public class WaybackConf {
     }
 
     public Policy getPolicy(String name) {
-        return ((Policy) configuration.getConfigurationSection("policies").get(name)).create();
+        return name != null ? ((Policy) configuration.getConfigurationSection("policies").get(name)).create() : null;
     }
 
     @SuppressWarnings("unchecked")
@@ -81,7 +83,7 @@ public class WaybackConf {
     }
 
     public Task getTask(String name) {
-        return ((Task) configuration.getConfigurationSection("tasks").get(name));
+        return name != null ? ((Task) configuration.getConfigurationSection("tasks").get(name)) : null;
     }
 
     public Map<String, ProgressedSchedule> getSchedules() {
@@ -135,28 +137,34 @@ public class WaybackConf {
         try {
             configuration.loadFromString(content);
             conf = new WaybackConf(configuration, enc.get());
+        } catch (InvalidConfigurationException e) {
+            e.printStackTrace();
+            TLocale.Logger.error("CORRUPTED_CONF");
+            try {
+                configuration.load(new BufferedReader(new InputStreamReader(WaybackConf.class.getResourceAsStream("/config.yml"))));
+                conf = new WaybackConf(configuration, enc.get());
+            } catch (IOException | InvalidConfigurationException e1) {
+                TLocale.Logger.error("ERR_LOAD_DEFAULT_CONF");
+                throw new NullPointerException();
+            }
+        }
+        {
+            HashMap<String, Storage> map = new HashMap<>();
+            getConf().getStorages().forEach((name, storage) -> {
+                if (storage != null && storage.init())
+                    map.put(name, storage);
+            });
+            getConf().storages = map;
+        }
+        {
             HashMap<String, ProgressedSchedule> map = new HashMap<>();
             getConf().getPreloadSchedules().forEach((name, preload) -> {
                 if (preload != null)
                     map.put(name, preload.toSchedule());
             });
             getConf().schedules = map;
-        } catch (InvalidConfigurationException e) {
-            TLocale.Logger.error("CORRUPTED_CONF");
-            try {
-                configuration.load(new BufferedReader(new InputStreamReader(WaybackConf.class.getResourceAsStream("/config.yml"))));
-                conf = new WaybackConf(configuration, enc.get());
-                HashMap<String, ProgressedSchedule> map = new HashMap<>();
-                getConf().getPreloadSchedules().forEach((name, preload) -> {
-                    if (preload != null)
-                        map.put(name, preload.toSchedule());
-                });
-                getConf().schedules = map;
-            } catch (IOException | InvalidConfigurationException e1) {
-                TLocale.Logger.error("ERR_LOAD_DEFAULT_CONF");
-                throw new NullPointerException();
-            }
         }
+        getConf().getSchedules().values().forEach(ProgressedSchedule::addToQueue);
     }
 
     private static String loadPlainText(AtomicBoolean enc) {

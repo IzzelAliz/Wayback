@@ -13,44 +13,20 @@ public abstract class ProgressedSchedule implements Runnable {
 
     private volatile boolean running, complete;
 
-    private Consumer<ProgressedSchedule> onStart, onComplete;
-
-    private BiConsumer<ProgressedSchedule, Exception> onError;
-
     private ProgressedSchedule next;
-
-    void onStart(Consumer<ProgressedSchedule> consumer) {
-        onStart = consumer;
-    }
-
-    void onComplete(Consumer<ProgressedSchedule> consumer) {
-        onComplete = consumer;
-    }
-
-    void onError(BiConsumer<ProgressedSchedule, Exception> consumer) {
-        onError = consumer;
-    }
 
     @Override
     public void run() {
         try {
-            if (onStart != null) {
-                onStart.accept(this);
-            }
             complete = false;
             running = true;
             execute();
             complete = true;
-            if (onComplete != null) {
-                onComplete.accept(this);
-            }
             if (next() != null) {
                 next().addToQueue();
             }
         } catch (Exception e) {
-            if (onError != null) {
-                onError.accept(this, e);
-            }
+            e.printStackTrace();
             if (!(e instanceof WaybackException))
                 throw new WaybackException(e);
         } finally {

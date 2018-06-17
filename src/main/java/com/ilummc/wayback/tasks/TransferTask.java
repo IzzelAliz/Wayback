@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import com.ilummc.wayback.WaybackConf;
 import com.ilummc.wayback.backups.Backup;
 import com.ilummc.wayback.backups.FileBackup;
+import com.ilummc.wayback.storage.FtpStorage;
 import com.ilummc.wayback.storage.LocalStorage;
 import com.ilummc.wayback.storage.Storage;
 import com.ilummc.wayback.util.Jsons;
@@ -21,7 +22,7 @@ import java.util.stream.Collectors;
 @SuppressWarnings("unchecked")
 public class TransferTask implements Task, ConfigurationSerializable {
 
-    private String from, to;
+    private String from, to, next;
 
     @SerializedName("no_enough_space")
     private List<String> noEnoughSpacePolicy = ImmutableList.of();
@@ -51,10 +52,18 @@ public class TransferTask implements Task, ConfigurationSerializable {
             if (((FileBackup) backupFrom).isIncremental())
                 return new IncrementalFileLocalTransferTask(((FileBackup) backupFrom), ((LocalStorage) storageTo),
                         noEnoughSpacePolicy.stream().map(WaybackConf.getConf()::getPolicy).filter(Objects::nonNull).collect(Collectors.toList()),
-                        completePolicy.stream().map(WaybackConf.getConf()::getPolicy).filter(Objects::nonNull).collect(Collectors.toList()));
+                        completePolicy.stream().map(WaybackConf.getConf()::getPolicy).filter(Objects::nonNull).collect(Collectors.toList()))
+                        .next(WaybackConf.getConf().getTask(next));
             else return new FullBackupFileLocalTransferTask(((FileBackup) backupFrom), ((LocalStorage) storageTo),
                     noEnoughSpacePolicy.stream().map(WaybackConf.getConf()::getPolicy).filter(Objects::nonNull).collect(Collectors.toList()),
-                    completePolicy.stream().map(WaybackConf.getConf()::getPolicy).filter(Objects::nonNull).collect(Collectors.toList()));
+                    completePolicy.stream().map(WaybackConf.getConf()::getPolicy).filter(Objects::nonNull).collect(Collectors.toList()))
+                    .next(WaybackConf.getConf().getTask(next));
+        }
+        if (storageFrom instanceof LocalStorage && storageTo instanceof FtpStorage) {
+            return new FtpUploadTransferTask(((LocalStorage) storageFrom), ((FtpStorage) storageTo),
+                    connectionFailPolicy.stream().map(WaybackConf.getConf()::getPolicy).filter(Objects::nonNull).collect(Collectors.toList()),
+                    completePolicy.stream().map(WaybackConf.getConf()::getPolicy).filter(Objects::nonNull).collect(Collectors.toList()))
+                    .next(WaybackConf.getConf().getTask(next));
         }
         return null;
     }

@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface Storage {
 
-    void init();
+    boolean init();
 
     long space();
 

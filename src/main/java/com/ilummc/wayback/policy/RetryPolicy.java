@@ -1,6 +1,7 @@
 package com.ilummc.wayback.policy;
 
 import com.google.gson.annotations.SerializedName;
+import com.ilummc.wayback.WaybackException;
 import com.ilummc.wayback.tasks.Executable;
 import com.ilummc.wayback.util.Jsons;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -52,8 +53,7 @@ public class RetryPolicy implements ConfigurationSerializable, Policy {
         @Override
         public void accept(Executable task) {
             if (this.times-- > 0) {
-                task.schedule().addToQueue();
-                throw new NullPointerException();
+                throw new WaybackException();
             } else throw new NullPointerException();
         }
 

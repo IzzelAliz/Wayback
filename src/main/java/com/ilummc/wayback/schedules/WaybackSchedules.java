@@ -1,14 +1,17 @@
 package com.ilummc.wayback.schedules;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import com.ilummc.tlib.resources.TLocale;
+import com.ilummc.wayback.WaybackCommand;
 import com.ilummc.wayback.WaybackConf;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.*;
+import java.util.*;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.RunnableScheduledFuture;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -22,7 +25,15 @@ public class WaybackSchedules {
 
     private final StatisticsExecutor executor;
 
-    @SuppressWarnings("unchecked")
+    public void shutdown() throws InterruptedException {
+        executor.shutdownNow();
+        while (executor.isTerminating()) {
+            TLocale.Logger.warn("AWAIT_TERMINATE");
+            WaybackCommand.printRunning();
+            executor.awaitTermination(5000, TimeUnit.MILLISECONDS);
+        }
+    }
+
     public List<ProgressedSchedule> getPending() {
         return executor.getList();
     }
@@ -40,7 +51,7 @@ public class WaybackSchedules {
     }
 
     void period(ProgressedSchedule task, long initialDelay, long period, TimeUnit unit) {
-        executor.scheduleWithFixedDelay(task, initialDelay, period, unit);
+        executor.scheduleAtFixedRate(task, initialDelay, period, unit);
     }
 
     public static WaybackSchedules instance() {
@@ -60,20 +71,24 @@ public class WaybackSchedules {
             return ImmutableList.copyOf(running);
         }
 
-        private Map<RunnableScheduledFuture<?>, ProgressedSchedule> map = new ConcurrentHashMap<>();
+        private Map<RunnableScheduledFuture<?>, ProgressedSchedule> map = Collections.synchronizedMap(Maps.newHashMap());
 
         StatisticsExecutor(int corePoolSize) {
             super(corePoolSize);
             this.running = new ArrayBlockingQueue<>(corePoolSize);
+            setExecuteExistingDelayedTasksAfterShutdownPolicy(false);
+            setContinueExistingPeriodicTasksAfterShutdownPolicy(false);
         }
 
-        @SuppressWarnings("unchecked")
         List<ProgressedSchedule> getList() {
-            ArrayList<RunnableScheduledFuture> list = Lists.newArrayList((BlockingQueue) getQueue());
-            return list.stream().map(map::get).collect(Collectors.toList());
+            HashSet<ProgressedSchedule> list = Sets.newHashSet();
+            list.addAll(map.values());
+            list.addAll(getQueue().stream().map(r -> mapTo(r).orElse(null))
+                    .filter(Objects::nonNull).collect(Collectors.toList()));
+            return ImmutableList.copyOf(list);
         }
 
-        private Optional<ProgressedSchedule> maoTo(Runnable runnable) {
+        private Optional<ProgressedSchedule> mapTo(Runnable runnable) {
             if (runnable instanceof RunnableScheduledFuture)
                 return Optional.ofNullable(map.get(runnable));
             else return Optional.empty();
@@ -83,19 +98,19 @@ public class WaybackSchedules {
         protected <V> RunnableScheduledFuture<V> decorateTask(Runnable runnable, RunnableScheduledFuture<V> task) {
             if (runnable instanceof ProgressedSchedule)
                 map.put(task, (ProgressedSchedule) runnable);
-            return task;
+            return super.decorateTask(runnable, task);
         }
 
         @Override
         protected void beforeExecute(Thread t, Runnable r) {
-            this.maoTo(r).ifPresent(schedule -> running.add(schedule));
+            this.mapTo(r).ifPresent(schedule -> running.add(schedule));
         }
 
         @Override
         protected void afterExecute(Runnable r, Throwable t) {
-            this.maoTo(r).ifPresent(schedule -> {
+            this.mapTo(r).ifPresent(schedule -> {
                 running.remove(schedule);
-                if (!schedule.isComplete()) {
+                if (t != null) {
                     map.entrySet().removeIf(entry -> entry.getValue() == schedule);
                 }
             });
