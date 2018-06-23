@@ -153,7 +153,6 @@ public class RollbackTask implements Task, ConfigurationSerializable {
                                 .forEach(prev -> {
                                     storage.findByTime(prev, compressor.suffix()).ifPresent(prevArchive -> {
                                         try {
-                                            System.out.println(prevArchive.getAbsolutePath());
                                             Archive from = compressor.from(prevArchive);
                                             Iterator<String> iterator = list.iterator();
                                             while (iterator.hasNext()) {
