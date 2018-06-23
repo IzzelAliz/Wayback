@@ -85,6 +85,7 @@ ROLLBACK:
   PREPARE_DONE: '&a准备完成，开始进行回滚 ...'
   KICK_ROLLBACK: '正在执行备份，暂时不能加入'
   ROLLBACK_FAIL: '&c回滚失败！！'
+  ROLLBACK.DATE_ERROR: '&c无效的日期，请输入有效的日期或者 &aconfirm'
   FILE_DELETE: '删除 {0} 文件'
   FILE_REPLACE: '替换 {0} 文件'
   UNUNLOADABLE_WORLD: '世界 {0} 为默认的世界，由于 Bukkit 的限制，该世界无法卸载，回滚可能不会对该世界生效'
