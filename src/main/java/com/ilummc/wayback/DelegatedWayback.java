@@ -6,13 +6,14 @@ import com.ilummc.wayback.backups.FileBackup;
 import com.ilummc.wayback.backups.SqlBackup;
 import com.ilummc.wayback.cmd.CommandRegistry;
 import com.ilummc.wayback.compress.ZipCompressor;
-import com.ilummc.wayback.storage.FtpStorage;
-import com.ilummc.wayback.storage.LocalStorage;
 import com.ilummc.wayback.policy.AbandonPolicy;
 import com.ilummc.wayback.policy.CleanLatestPolicy;
 import com.ilummc.wayback.policy.CleanOldestPolicy;
 import com.ilummc.wayback.policy.RetryPolicy;
 import com.ilummc.wayback.schedules.PreloadSchedule;
+import com.ilummc.wayback.storage.FtpStorage;
+import com.ilummc.wayback.storage.LocalStorage;
+import com.ilummc.wayback.tasks.RollbackTask;
 import com.ilummc.wayback.tasks.TransferTask;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 
@@ -24,8 +25,10 @@ final class DelegatedWayback {
         WaybackConf.init();
         CommandRegistry.init();
         CommandRegistry.register(new WaybackCommand());
-        new Metrics(wayback);
         TPluginManager.delayDisable(wayback);
+        Environment.check();
+        Stats.init();
+        new Metrics(wayback);
     }
 
     private static void registerSerializable() {
@@ -44,6 +47,7 @@ final class DelegatedWayback {
         ConfigurationSerialization.registerClass(PreloadSchedule.NormalPreload.class, "Instant");
         ConfigurationSerialization.registerClass(PreloadSchedule.PeriodPreload.class, "Period");
         ConfigurationSerialization.registerClass(PreloadSchedule.DelayedPreload.class, "Delayed");
+        ConfigurationSerialization.registerClass(RollbackTask.class, "Rollback");
     }
 
     static void onDisable(Wayback wayback) {

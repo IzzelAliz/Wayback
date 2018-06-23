@@ -8,10 +8,7 @@ import com.ilummc.wayback.WaybackCommand;
 import com.ilummc.wayback.WaybackConf;
 
 import java.util.*;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.RunnableScheduledFuture;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -63,6 +60,25 @@ public class WaybackSchedules {
         this.executor.prestartAllCoreThreads();
     }
 
+    private static class WrappedThreadFactory implements ThreadFactory {
+
+        private static final AtomicInteger COUNT = new AtomicInteger(1);
+
+        private final ThreadFactory factory;
+
+        private WrappedThreadFactory(ThreadFactory factory) {
+            this.factory = factory;
+        }
+
+        @Override
+        public Thread newThread(Runnable r) {
+            Thread thread = factory.newThread(r);
+            thread.setName("Wayback Schedules " + COUNT.getAndIncrement());
+            return thread;
+        }
+
+    }
+
     private static class StatisticsExecutor extends ScheduledThreadPoolExecutor {
 
         private ArrayBlockingQueue<ProgressedSchedule> running;
@@ -78,6 +94,7 @@ public class WaybackSchedules {
             this.running = new ArrayBlockingQueue<>(corePoolSize);
             setExecuteExistingDelayedTasksAfterShutdownPolicy(false);
             setContinueExistingPeriodicTasksAfterShutdownPolicy(false);
+            setThreadFactory(new WrappedThreadFactory(getThreadFactory()));
         }
 
         List<ProgressedSchedule> getList() {
@@ -111,6 +128,7 @@ public class WaybackSchedules {
             this.mapTo(r).ifPresent(schedule -> {
                 running.remove(schedule);
                 if (t != null) {
+                    t.printStackTrace();
                     map.entrySet().removeIf(entry -> entry.getValue() == schedule);
                 }
             });

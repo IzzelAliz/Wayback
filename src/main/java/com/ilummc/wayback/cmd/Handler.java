@@ -13,4 +13,6 @@ public @interface Handler {
 
     String descriptor();
 
+    String permission() default "wayback.default";
+
 }

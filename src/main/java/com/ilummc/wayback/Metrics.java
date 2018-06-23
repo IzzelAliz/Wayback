@@ -111,6 +111,8 @@ public class Metrics {
                 startSubmitting();
             }
         }
+        addCustomChart(new SingleLineChart("backups", Stats::getBackups));
+        addCustomChart(new SingleLineChart("recoveries", Stats::getRecoveries));
     }
 
     /**

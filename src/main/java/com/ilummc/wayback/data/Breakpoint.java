@@ -1,14 +1,20 @@
 package com.ilummc.wayback.data;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Breakpoint {
@@ -19,10 +25,26 @@ public class Breakpoint {
 
     private JsonObject changes;
 
+    private transient LocalDateTime time;
+
+    public Breakpoint(JsonObject map, JsonObject changes, boolean incremental, LocalDateTime time) {
+        this(map, changes, incremental);
+        this.time = time;
+    }
+
     public Breakpoint(JsonObject map, JsonObject changes, boolean incremental) {
         this.map = map;
         this.changes = changes;
         this.incremental = incremental;
+    }
+
+    public Breakpoint setTime(LocalDateTime time) {
+        this.time = time;
+        return this;
+    }
+
+    public LocalDateTime getTime() {
+        return time;
     }
 
     public JsonObject getMap() {
@@ -58,6 +80,20 @@ public class Breakpoint {
     private static Map<String, Object> removeEmpty(Map<String, Object> map) {
         map.entrySet().removeIf(entry -> entry.getValue() instanceof Map && removeEmpty(((Map) entry.getValue())).isEmpty());
         return map;
+    }
+
+    public static List<String> toPlain(Map<String, Object> map) {
+        List<String> re = new ArrayList<>();
+        addAll("", map, re);
+        return re;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void addAll(String base, Map<String, Object> map, List<String> re) {
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            if (entry.getValue() instanceof Map) addAll(base + entry.getKey() + "/", ((Map) entry.getValue()), re);
+            else if (entry.getValue() != Change.C) re.add(base + entry.getKey());
+        }
     }
 
     public static Map<String, Object> makeDiff(JsonObject cur, JsonObject prev) {

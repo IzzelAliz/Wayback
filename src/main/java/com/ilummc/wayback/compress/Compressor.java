@@ -10,4 +10,6 @@ public interface Compressor {
 
     String suffix();
 
+    Archive from(File file) throws Exception;
+
 }

@@ -3,6 +3,7 @@ package com.ilummc.wayback.cmd;
 import com.ilummc.tlib.resources.TLocale;
 import com.ilummc.wayback.Wayback;
 import org.apache.commons.collections.map.CaseInsensitiveMap;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -15,8 +16,7 @@ import java.util.Map;
 
 public class CommandRegistry implements CommandExecutor {
 
-    @SuppressWarnings("unchecked")
-    private static Map<String, Method> registries = new CaseInsensitiveMap();
+    private static Map<Handler, Method> registries = new HashMap<>();
 
     public static void register(Object object) {
         Arrays.stream(object.getClass().getDeclaredMethods()).filter(method -> method.isAnnotationPresent(Handler.class))
@@ -25,7 +25,7 @@ public class CommandRegistry implements CommandExecutor {
                         method.getParameterTypes()[1].equals(CommandSender.class))
                 .forEach(method -> {
                     method.setAccessible(true);
-                    registries.put(method.getAnnotation(Handler.class).value(), method);
+                    registries.put(method.getAnnotation(Handler.class), method);
                 });
     }
 
@@ -39,10 +39,16 @@ public class CommandRegistry implements CommandExecutor {
             registries.values().stream().map(method -> method.getAnnotation(Handler.class))
                     .forEach(handler -> TLocale.sendTo(sender, "USAGE", "/wayback " + handler.value(), TLocale.asString(handler.descriptor())));
         else {
-            Method method = registries.get(args[0]);
-            if (method == null) {
+            Map.Entry<Handler, Method> entry = registries.entrySet().stream().filter(en -> en.getKey().value().equals(args[0].toLowerCase()))
+                    .findAny().orElse(null);
+            if (entry == null || entry.getValue() == null) {
                 TLocale.sendTo(sender, "COMMANDS.UNKNOWN_SUB_COMMAND");
             } else {
+                if (!sender.hasPermission(entry.getKey().permission()) && sender != Bukkit.getConsoleSender()) {
+                    TLocale.sendTo(sender, "COMMANDS.NO_PERMISSION");
+                    return true;
+                }
+                Method method = entry.getValue();
                 String[] newArg = new String[args.length - 1];
                 System.arraycopy(args, 1, newArg, 0, args.length - 1);
                 try {

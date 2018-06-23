@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.ilummc.tlib.resources.TLocale;
+import com.ilummc.wayback.Stats;
 import com.ilummc.wayback.WaybackConf;
 import com.ilummc.wayback.backups.FileBackup;
 import com.ilummc.wayback.compress.Archive;
@@ -96,6 +97,7 @@ class IncrementalFileLocalTransferTask implements Executable {
         }
         reset();
         if (next != null) next.create().schedule().addToQueue();
+        Stats.increaseBackup();
     }
 
     private void reset() {

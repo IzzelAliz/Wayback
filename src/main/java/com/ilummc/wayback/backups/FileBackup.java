@@ -36,6 +36,10 @@ public class FileBackup implements ConfigurationSerializable, Backup {
 
     private boolean incremental = true;
 
+    public String getRoot() {
+        return root;
+    }
+
     public boolean isIncremental() {
         return incremental;
     }

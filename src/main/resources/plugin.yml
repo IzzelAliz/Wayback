@@ -5,6 +5,17 @@ softdepend: [TabooLib]
 authors: [IzzelAliz]
 description: Wayback - Backup restore plugin
 website: https://github.com/IzzelAliz/Wayback
+permissions:
+  wayback.default:
+    default: true
+  wayback.rollback:
+    default: false
+  wayback.debug:
+    default: op
+  wayback.task:
+    default: op
+  wayback.conf:
+    default: op
 commands:
   wayback:
     usage: /wayback

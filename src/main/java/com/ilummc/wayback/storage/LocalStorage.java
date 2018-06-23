@@ -14,6 +14,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -87,6 +88,51 @@ public class LocalStorage implements ConfigurationSerializable, Storage {
                 .flatMap(element -> Optional.of(Jsons.mapTo(element.getAsJsonObject(), Breakpoint.class)));
     }
 
+    @Override
+    public Optional<Breakpoint> findNearest(LocalDateTime time) {
+        return root.stream()
+                .map(File::new)
+                .filter(f -> f.isDirectory() && f.listFiles() != null)
+                .flatMap(f -> Arrays.stream(Objects.requireNonNull(f.listFiles())))
+                .filter(f -> f.getName().endsWith(".json"))
+                .map(f -> Pair.of(f, LocalDateTime.parse(f.getName().replace('_', ':')
+                        .substring(0, f.getName().lastIndexOf('.')))))
+                .min((o1, o2) -> ((int) Math.abs(time.toEpochSecond(ZoneOffset.MIN) - o1.getValue().toEpochSecond(ZoneOffset.MIN))
+                        - ((int) Math.abs(time.toEpochSecond(ZoneOffset.MIN) - o2.getValue().toEpochSecond(ZoneOffset.MIN)))))
+                .flatMap(pair -> Optional.of(Pair.of(new JsonParser().parse(Files.toJson(pair.getKey())).getAsJsonObject(), pair.getValue())))
+                .flatMap(pair -> Optional.of(Jsons.mapTo(pair.getKey(), Breakpoint.class).setTime(pair.getValue())));
+    }
+
+    @Override
+    public List<LocalDateTime> listAvailable() {
+        return root.stream()
+                .map(File::new)
+                .filter(f -> f.isDirectory() && f.listFiles() != null)
+                .flatMap(f -> Arrays.stream(Objects.requireNonNull(f.listFiles())))
+                .filter(f -> f.getName().endsWith(".json"))
+                .map(f -> LocalDateTime.parse(f.getName().replace('_', ':')
+                        .substring(0, f.getName().lastIndexOf('.'))))
+                .collect(Collectors.toList());
+    }
+
+    public Optional<File> findByTime(LocalDateTime time, String suffix) {
+        String s = time.toString().replace(':', '_');
+        return root.stream()
+                .map(File::new)
+                .filter(f -> f.isDirectory() && f.listFiles() != null)
+                .flatMap(f -> Arrays.stream(Objects.requireNonNull(f.listFiles())))
+                .filter(file -> file.getName().endsWith("." + suffix))
+                .filter(file -> s.equals(file.getName().substring(0, file.getName().lastIndexOf('.'))))
+                .findAny();
+    }
+
+    public Breakpoint getExactly(LocalDateTime time) {
+        return findByTime(time, "json")
+                .flatMap(file -> Optional.of(Jsons.mapTo(new JsonParser().parse(Files.toJson(file)).getAsJsonObject(), Breakpoint.class)
+                        .setTime(time)))
+                .orElse(null);
+    }
+
     public File largest() {
         return root.stream().map(File::new).min((o1, o2) -> (int) (o1.getFreeSpace() - o2.getFreeSpace())).orElseGet(() -> {
             File file = File.listRoots()[0];
@@ -95,5 +141,6 @@ public class LocalStorage implements ConfigurationSerializable, Storage {
             return file1;
         });
     }
+
 
 }

@@ -10,6 +10,7 @@ import com.ilummc.wayback.policy.Policy;
 import com.ilummc.wayback.schedules.PreloadSchedule;
 import com.ilummc.wayback.schedules.ProgressedSchedule;
 import com.ilummc.wayback.storage.Storage;
+import com.ilummc.wayback.tasks.RollbackTask;
 import com.ilummc.wayback.tasks.Task;
 import com.ilummc.wayback.util.Crypto;
 import org.bukkit.command.CommandSender;
@@ -44,6 +45,10 @@ public class WaybackConf {
 
     public int getPoolSize() {
         return configuration.getInt("pool_size", Runtime.getRuntime().availableProcessors());
+    }
+
+    public RollbackTask getRollback() {
+        return ((RollbackTask) configuration.get("rollback"));
     }
 
     public Storage getStorage(String name) {
@@ -213,11 +218,11 @@ public class WaybackConf {
                 .findAny();
         any.ifPresent(Thread::suspend);
         try {
-            return reader.readLine();
+            String s = reader.readLine();
+            any.ifPresent(Thread::resume);
+            return s;
         } catch (Throwable ignored) {
             return "";
-        } finally {
-            any.ifPresent(Thread::resume);
         }
     }
 

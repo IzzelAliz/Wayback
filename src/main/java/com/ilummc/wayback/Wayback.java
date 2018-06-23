@@ -21,6 +21,8 @@ public final class Wayback extends JavaPlugin {
 
     private boolean loaded = false;
 
+    private boolean disabling = false;
+
     private static Wayback instance;
 
     public static WaybackSchedules getSchedules() {
@@ -37,6 +39,10 @@ public final class Wayback extends JavaPlugin {
 
     public static Wayback instance() {
         return instance;
+    }
+
+    public static boolean isDisabling() {
+        return instance().disabling;
     }
 
     @Override
@@ -71,8 +77,18 @@ public final class Wayback extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        if (loaded)
+        while (disabling) {
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException ignored) {
+            }
+        }
+        if (loaded) {
+            loaded = false;
+            disabling = true;
             DelegatedWayback.onDisable(this);
+            disabling = false;
+        }
     }
 
 }

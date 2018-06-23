@@ -9,10 +9,6 @@ import java.util.Base64;
 
 public class Crypto {
 
-    public static void main(String[] args) {
-        System.out.println(decrypt(encrypt("pool_size: 8", "test"), "test"));
-    }
-
     public static String encrypt(String content, String password) {
         try {
             KeyGenerator keyGen = KeyGenerator.getInstance("AES");

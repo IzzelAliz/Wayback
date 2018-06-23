@@ -1,6 +1,7 @@
 package com.ilummc.wayback.compress;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 
@@ -9,5 +10,9 @@ public interface Archive {
     void write(String name, InputStream input) throws Exception;
 
     File create(File base, LocalDateTime time) throws Exception;
+
+    void transferTo(String entry, File file) throws Exception;
+
+    boolean hasEntry(String entry);
 
 }

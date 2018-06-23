@@ -1,4 +1,4 @@
-pool_size: 8
+pool_size: 1
 storages:
   local_storage:
     ==: LocalStorage
@@ -30,12 +30,12 @@ backups:
     skip_large_file: true
     large_file: 64.000
     incremental: true
-  sql_backup:
-    ==: SQL
-    jdbcUrl: 'jdbc:mysql://127.0.0.1/db'
-    user: root
-    password: root
-    incremental: true
+#  sql_backup:
+#    ==: SQL
+#    jdbcUrl: 'jdbc:mysql://127.0.0.1/db'
+#    user: root
+#    password: root
+#    incremental: true
 policies:
   clean_oldest:
     ==: CleanOldest
@@ -60,12 +60,12 @@ tasks:
     to: local_storage
     no_enough_space: [clean_oldest, retry1]
   # next: upload_ftp
-  upload_ftp:
-    ==: Transfer
-    from: local_storage
-    to: ftp_server
-    connection_fail: [abandon]
-    on_complete: [clean_latest]
+#  upload_ftp:
+#    ==: Transfer
+#    from: local_storage
+#    to: ftp_server
+#    connection_fail: [abandon]
+#    on_complete: [clean_latest]
 schedules:
   timer_backup:
     ==: Period
@@ -73,3 +73,7 @@ schedules:
     initial: 60
     period: 60
     task: backup_file
+rollback:
+  ==: Rollback
+  from: [local_storage]
+  to: file_backup
