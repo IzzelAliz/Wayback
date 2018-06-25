@@ -95,10 +95,14 @@ public class WaybackCommand {
                     .sorted(Comparator.reverseOrder()).forEach(time -> sender.sendMessage(time.toString()));
         } else if ("confirm".equalsIgnoreCase(arg[0])) {
             System.setProperty("tlib.forceAsync", "true");
+
             TLocale.sendToConsole("ROLLBACK.PREPARE");
             Bukkit.getPluginManager().registerEvents(new RejectJoiningListener(), Wayback.instance());
+
             TLocale.sendToConsole("ROLLBACK.PREPARE_KICK_PLAYERS");
-            Bukkit.getOnlinePlayers().forEach(player -> player.kickPlayer(TLocale.asString("ROLLBACK.KICK_ROLLBACK")));
+            Bukkit.getWorlds().stream().flatMap(world -> world.getPlayers().stream())
+                    .forEach(player -> player.kickPlayer(TLocale.asString("ROLLBACK.KICK_ROLLBACK")));
+
             WaybackConf.getConf().getRollback().create(time.getValue()).schedule().addToQueue();
             while (true)
                 try {

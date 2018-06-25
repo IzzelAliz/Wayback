@@ -26,6 +26,9 @@ CONVERT_TO_ENCRYPTED: '&a配置文件现在以 AES256 加密存储'
 INPUT_PASSWORD: '请添加一个参数作为密码'
 AWAIT_TERMINATE: '有任务正在执行，等待执行完毕'
 TERMINATE_ERROR: '停止任务时出现异常，最后一次备份可能失效'
+UPDATER:
+  - 'Wayback 检测到更新 &b版本 {0} - {1}'
+  - '{2}'
 TASKS:
   SCHEDULED_BACKUP_NAME: '计划备份任务'
   METRICS_NAME: 'bStats 数据统计'

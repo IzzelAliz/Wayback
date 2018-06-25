@@ -29,6 +29,7 @@ final class DelegatedWayback {
         Environment.check();
         Stats.init();
         new Metrics(wayback);
+        WaybackUpdater.start();
     }
 
     private static void registerSerializable() {
