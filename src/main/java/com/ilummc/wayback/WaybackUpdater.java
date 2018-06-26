@@ -18,8 +18,9 @@ final class WaybackUpdater {
         Bukkit.getScheduler().runTaskTimerAsynchronously(Wayback.instance(), () -> {
             try {
                 JsonObject fetch = fetch(GITHUB_API);
-                TLocale.sendToConsole("UPDATER", fetch.get("tag_name").getAsString(),
-                        fetch.get("name").getAsString(), fetch.get("body").getAsString());
+                if (!String.valueOf(Wayback.instance().getDescription().getVersion()).equals(fetch.get("tag_name").getAsString()))
+                    TLocale.sendToConsole("UPDATER", fetch.get("tag_name").getAsString(),
+                            fetch.get("name").getAsString(), fetch.get("body").getAsString());
             } catch (IOException ignored) {
             }
         }, 10, 20 * 60 * 12);
