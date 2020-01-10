@@ -273,7 +273,8 @@ public abstract class WaybackLibLoader extends JavaPlugin {
                     return;
                 }
             }
-            Class<?> mainClass = getMainClass();
+
+            /*Class<?> mainClass = getMainClass();
             if (mainClass != null && mainClass.isAnnotationPresent(Version.class)) {
                 double requireVersion = mainClass.getAnnotation(Version.class).value();
                 // 依赖版本高于当前运行版本
@@ -299,7 +300,7 @@ public abstract class WaybackLibLoader extends JavaPlugin {
                     }
                     return;
                 }
-            }
+            }*/
         }
         // 如果是 Forge 服务端
         if (forge) {
