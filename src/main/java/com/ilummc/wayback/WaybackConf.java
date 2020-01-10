@@ -1,8 +1,6 @@
 package com.ilummc.wayback;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.io.Files;
-import com.ilummc.tlib.resources.TLocale;
 import com.ilummc.wayback.backups.Backup;
 import com.ilummc.wayback.compress.Compressor;
 import com.ilummc.wayback.compress.ZipCompressor;
@@ -13,6 +11,8 @@ import com.ilummc.wayback.storage.Storage;
 import com.ilummc.wayback.tasks.RollbackTask;
 import com.ilummc.wayback.tasks.Task;
 import com.ilummc.wayback.util.Crypto;
+import com.ilummc.wayback.util.Files;
+import io.izzel.taboolib.module.locale.TLocale;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -22,7 +22,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -235,12 +235,12 @@ public class WaybackConf {
     private static String load() throws IOException {
         File config = new File(Wayback.instance().getDataFolder(), "config.yml");
         if (!config.exists()) Wayback.instance().saveResource("config.yml", true);
-        return Files.toString(config, Charset.forName("utf-8"));
+        return Files.read(config, StandardCharsets.UTF_8);
     }
 
     private static void save(String content) throws IOException {
         File config = new File(Wayback.instance().getDataFolder(), "config.yml");
-        Files.write(content.getBytes("utf-8"), config);
+        Files.write(content, config, StandardCharsets.UTF_8);
     }
 
 }

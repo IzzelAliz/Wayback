@@ -14,8 +14,8 @@ ERR_LOAD_7ZIP: '加载 7-Zip 库时出现错误，请检查 /TabooLib/libs 内�
 ERR_LOAD_CONF: '加载配置文件时发生错误'
 ENCRYPTED_CONF: '配置文件已加密，请输入密码，&c输入的密码不会显示，输入完成后请按下回车'
 INCORRECT_PASSWORD:
- - '&c密码错误或配置文件已损坏，&a请尝试重新输入'
- - '&f输入 &b!!&f 使用默认配置，&c**这将删除之前的配置！**'
+  - '&c密码错误或配置文件已损坏，&a请尝试重新输入'
+  - '&f输入 &b!!&f 使用默认配置，&c**这将删除之前的配置！**'
 CORRUPTED_CONF: '配置文件已损坏，正在使用默认配置文件'
 USING_DEFAULT_CONF: '&a删除了原有配置文件并使用默认配置，请及时重新配置备份计划'
 ERR_LOAD_DEFAULT_CONF: '加载默认配置文件失败'
@@ -26,12 +26,13 @@ CONVERT_TO_ENCRYPTED: '&a配置文件现在以 AES256 加密存储'
 INPUT_PASSWORD: '请添加一个参数作为密码'
 AWAIT_TERMINATE: '有任务正在执行，等待执行完毕'
 TERMINATE_ERROR: '停止任务时出现异常，最后一次备份可能失效'
+FILE_READ_ERROR: '文件读取失败！'
+FILE_WRITE_ERROR: '文件写入失败！'
+RELOAD_FAILED: '重载成功！'
+RELOAD_SUCCESS: '重载失败！'
 UPDATER:
   - 'Wayback 检测到更新 &b版本 {0} - {1}'
   - '{2}'
-TASKS:
-  SCHEDULED_BACKUP_NAME: '计划备份任务'
-  METRICS_NAME: 'bStats 数据统计'
 USAGE: '&a{0} &f- &e{1}'
 COMMANDS:
   CONF_USAGE: '配置插件的配置文件'
@@ -47,6 +48,8 @@ COMMANDS:
   CONFIRM_BACKUP: '&c你将要恢复至 {0} 的备份，输入 /wayback rollback confirm 来关闭服务端并开始恢复'
   NO_PERMISSION: '&c你没有权限执行这条命令'
 TASKS:
+  SCHEDULED_BACKUP_NAME: '计划备份任务'
+  METRICS_NAME: 'bStats 数据统计'
   LIST: 'Wayback 任务计划列表 - 最大同时执行数量 {0}'
   RUNNING_TASK_FORMAT: '&b({0}) {1} &f已完成 {2}，预计用时 {3}'
   PENDING_TASK_FORMAT: '&b({0}) {1} &f等待运行'

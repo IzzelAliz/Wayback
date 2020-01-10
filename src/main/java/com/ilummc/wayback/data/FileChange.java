@@ -20,7 +20,7 @@ public class FileChange {
     }
 
     public enum Change {
-        MODIFY, DELETE, CREATE;
+        MODIFY, DELETE, CREATE
     }
 
 }

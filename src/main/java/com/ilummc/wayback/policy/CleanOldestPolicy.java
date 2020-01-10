@@ -1,6 +1,5 @@
 package com.ilummc.wayback.policy;
 
-import com.ilummc.wayback.schedules.ProgressedSchedule;
 import com.ilummc.wayback.tasks.Executable;
 import com.ilummc.wayback.util.Jsons;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;

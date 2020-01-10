@@ -1,9 +1,9 @@
 package com.ilummc.wayback.tasks;
 
-import com.ilummc.tlib.resources.TLocale;
 import com.ilummc.wayback.policy.Policy;
 import com.ilummc.wayback.storage.FtpStorage;
 import com.ilummc.wayback.storage.LocalStorage;
+import io.izzel.taboolib.module.locale.TLocale;
 import it.sauronsoftware.ftp4j.FTPClient;
 import it.sauronsoftware.ftp4j.FTPDataTransferListener;
 import it.sauronsoftware.ftp4j.FTPException;

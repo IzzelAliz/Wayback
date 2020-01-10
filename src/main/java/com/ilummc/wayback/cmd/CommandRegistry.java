@@ -1,8 +1,7 @@
 package com.ilummc.wayback.cmd;
 
-import com.ilummc.tlib.resources.TLocale;
 import com.ilummc.wayback.Wayback;
-import org.apache.commons.collections.map.CaseInsensitiveMap;
+import io.izzel.taboolib.module.locale.TLocale;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
