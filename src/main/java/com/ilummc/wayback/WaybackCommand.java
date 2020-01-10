@@ -20,6 +20,8 @@ import java.time.ZoneOffset;
 import java.util.Comparator;
 import java.util.Optional;
 
+import static com.ilummc.wayback.Wayback.getSchedules;
+
 public class WaybackCommand {
 
     @Handler(value = "conf", descriptor = "COMMANDS.CONF_USAGE", permission = "wayback.conf")
@@ -75,6 +77,10 @@ public class WaybackCommand {
 
     @Handler(value = "reload", descriptor = "COMMANDS.RELOAD", permission = "wayback.reload")
     private static void reload(String[] arg, CommandSender sender) {
+        if (getSchedules().getRunning().size() > 0) {
+            TLocale.sendTo(sender, "RELOAD_TASK_RUNNING");
+            return;
+        }
         if (Wayback.reload()) {
             TLocale.sendTo(sender, "RELOAD_SUCCESS");
         } else {

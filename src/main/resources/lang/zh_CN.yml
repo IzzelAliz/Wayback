@@ -30,6 +30,7 @@ FILE_READ_ERROR: '文件读取失败！'
 FILE_WRITE_ERROR: '文件写入失败！'
 RELOAD_FAILED: '重载成功！'
 RELOAD_SUCCESS: '重载失败！'
+RELOAD_TASK_RUNNING: '任务正在进行中，请稍后再试'
 UPDATER:
   - 'Wayback 检测到更新 &b版本 {0} - {1}'
   - '{2}'
