@@ -48,8 +48,11 @@ public final class Wayback extends WaybackLibLoader {
 
     public static boolean reload() {
         try {
-            Wayback.instance().reloadConfig();
+            WaybackSchedules.instance().shutdown();
             instance().loaded = false;
+            WaybackConf.getConf().cleanSchedules();
+            WaybackSchedules.renew();
+            Wayback.instance().reloadConfig();
             TLocale.reload();
             instance().onEnable();
             return true;

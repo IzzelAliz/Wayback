@@ -39,6 +39,9 @@ public class WaybackSchedules {
         return executor.getRunning();
     }
 
+    public static void renew() {
+        WaybackTasksHolder.renew();
+    }
     void execute(ProgressedSchedule task) {
         executor.execute(task);
     }
@@ -138,6 +141,12 @@ public class WaybackSchedules {
 
     private static final class WaybackTasksHolder {
         private static WaybackSchedules instance = new WaybackSchedules();
+
+        public static void renew() {
+            synchronized (WaybackTasksHolder.class) {
+                instance = new WaybackSchedules();
+            }
+        }
     }
 
 }

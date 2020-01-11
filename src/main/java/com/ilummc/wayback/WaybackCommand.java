@@ -56,7 +56,7 @@ public class WaybackCommand {
     @Handler(value = "task", descriptor = "COMMANDS.TASK_USAGE", permission = "wayback.task")
     private static void task(String[] arg, CommandSender sender) {
         if (arg.length == 0) throw new NullPointerException(TLocale.asString("COMMANDS.ILLEGAL_ARGUMENT"));
-        else if ("list".equals(arg[0])) {
+        else if ("list".equalsIgnoreCase(arg[0])) {
             TLocale.sendTo(sender, "TASKS.LIST", String.valueOf(WaybackConf.getConf().getPoolSize()));
             printRunning();
             WaybackSchedules.instance().getPending().stream()

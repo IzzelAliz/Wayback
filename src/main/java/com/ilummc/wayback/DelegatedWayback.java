@@ -30,8 +30,8 @@ final class DelegatedWayback {
         Stats.init();
 
         new Metrics(instance());
-        if (instance().getConfig().isSet("checkUpdate")) {
-            instance().getConfig().set("checkUpdate", false);
+        if (!instance().getConfig().isSet("checkUpdate")) {
+            instance().getConfig().set("checkUpdate", true);
             instance().saveConfig();
         }
         if (instance().getConfig().getBoolean("checkUpdate")) {

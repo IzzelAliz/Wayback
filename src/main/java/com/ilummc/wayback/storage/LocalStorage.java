@@ -1,7 +1,6 @@
 package com.ilummc.wayback.storage;
 
 import com.google.common.collect.ImmutableList;
-import com.google.gson.JsonParser;
 import com.ilummc.wayback.data.Breakpoint;
 import com.ilummc.wayback.util.Files;
 import com.ilummc.wayback.util.Jsons;
@@ -18,6 +17,8 @@ import java.time.ZoneOffset;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static com.ilummc.wayback.util.Jsons.getJsonParser;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class LocalStorage implements ConfigurationSerializable, Storage {
@@ -89,7 +90,7 @@ public class LocalStorage implements ConfigurationSerializable, Storage {
 
     @Override
     public Optional<Breakpoint> findLast() {
-        return latestZip().flatMap(file -> Optional.of(new JsonParser().parse(Files.readJson(file))))
+        return latestZip().flatMap(file -> Optional.of(getJsonParser().parse(Files.readJson(file))))
                 .flatMap(element -> Optional.of(Jsons.mapTo(element.getAsJsonObject(), Breakpoint.class)));
     }
 
@@ -97,7 +98,7 @@ public class LocalStorage implements ConfigurationSerializable, Storage {
     public Optional<Breakpoint> findNearest(LocalDateTime time) {
         return getFilesStream()
                 .min(Comparator.comparingInt(o -> (int) Math.abs(time.toEpochSecond(ZoneOffset.MIN) - o.getValue().toEpochSecond(ZoneOffset.MIN))))
-                .flatMap(pair -> Optional.of(Pair.of(new JsonParser().parse(Files.readJson(pair.getKey())).getAsJsonObject(), pair.getValue())))
+                .flatMap(pair -> Optional.of(Pair.of(getJsonParser().parse(Files.readJson(pair.getKey())).getAsJsonObject(), pair.getValue())))
                 .flatMap(pair -> Optional.of(Jsons.mapTo(pair.getKey(), Breakpoint.class).setTime(pair.getValue())));
     }
 
@@ -126,7 +127,7 @@ public class LocalStorage implements ConfigurationSerializable, Storage {
 
     public Breakpoint getExactly(LocalDateTime time) {
         return findByTime(time, "json")
-                .flatMap(file -> Optional.of(Jsons.mapTo(new JsonParser().parse(Files.readJson(file)).getAsJsonObject(), Breakpoint.class)
+                .flatMap(file -> Optional.of(Jsons.mapTo(getJsonParser().parse(Files.readJson(file)).getAsJsonObject(), Breakpoint.class)
                         .setTime(time)))
                 .orElse(null);
     }

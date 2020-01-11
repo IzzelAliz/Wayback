@@ -2,7 +2,6 @@
 package com.ilummc.wayback;
 
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import io.izzel.taboolib.PluginLoader;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -32,6 +31,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipFile;
 
+import static com.ilummc.wayback.util.Jsons.getJsonParser;
 //init class from https://github.com/Bkm016/TabooLib-Loader/blob/master/src/io/izzel/taboolib/loader/Plugin.java
 
 /**
@@ -181,7 +181,7 @@ public abstract class WaybackLibLoader extends JavaPlugin {
                 continue;
             }
             try {
-                JsonObject jsonObject = (JsonObject) new JsonParser().parse(read);
+                JsonObject jsonObject = (JsonObject) getJsonParser().parse(read);
                 if (jsonObject.has("tag_name")) {
                     return new String[]{jsonObject.get("tag_name").getAsString(), url[0], url[1]};
                 }

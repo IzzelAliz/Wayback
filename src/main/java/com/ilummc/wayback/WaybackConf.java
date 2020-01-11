@@ -95,6 +95,10 @@ public class WaybackConf {
         return ImmutableMap.copyOf(schedules);
     }
 
+    public void cleanSchedules() {
+        schedules.clear();
+    }
+
     @SuppressWarnings("unchecked")
     private Map<String, PreloadSchedule> getPreloadSchedules() {
         return ((Map<String, PreloadSchedule>) ((Map) configuration.getConfigurationSection("schedules").getValues(false)));

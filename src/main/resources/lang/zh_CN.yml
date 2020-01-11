@@ -48,6 +48,7 @@ COMMANDS:
   DEBUG_SWITCH: '当前调试等级 {0}'
   CONFIRM_BACKUP: '&c你将要恢复至 {0} 的备份，输入 /wayback rollback confirm 来关闭服务端并开始恢复'
   NO_PERMISSION: '&c你没有权限执行这条命令'
+  RELOAD: '重载插件配置'
 TASKS:
   SCHEDULED_BACKUP_NAME: '计划备份任务'
   METRICS_NAME: 'bStats 数据统计'

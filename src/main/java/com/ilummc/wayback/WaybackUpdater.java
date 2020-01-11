@@ -1,7 +1,6 @@
 package com.ilummc.wayback;
 
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import io.izzel.taboolib.module.locale.TLocale;
 import org.bukkit.Bukkit;
 
@@ -10,6 +9,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+
+import static com.ilummc.wayback.util.Jsons.getJsonParser;
 
 final class WaybackUpdater {
 
@@ -31,7 +32,7 @@ final class WaybackUpdater {
         URL u = new URL(url);
         HttpURLConnection connection = ((HttpURLConnection) u.openConnection());
         connection.setRequestMethod("GET");
-        return new JsonParser().parse(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8)).getAsJsonObject();
+        return getJsonParser().parse(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8)).getAsJsonObject();
     }
 
 }

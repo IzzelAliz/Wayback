@@ -2,7 +2,6 @@ package com.ilummc.wayback.backups;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.stream.JsonWriter;
 import com.ilummc.wayback.util.Hash;
@@ -16,6 +15,9 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
+
+import static com.ilummc.wayback.util.Jsons.getJsonParser;
+
 
 @SerializableAs("File")
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -79,7 +81,7 @@ public class FileBackup implements ConfigurationSerializable, Backup {
             }
             writer.endObject();
             writer.flush();
-            return new JsonParser().parse(out.toString("utf-8")).getAsJsonObject();
+            return getJsonParser().parse(out.toString("utf-8")).getAsJsonObject();
         } catch (IOException e) {
             return new JsonObject();
         }
