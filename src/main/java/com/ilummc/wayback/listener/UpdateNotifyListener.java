@@ -12,7 +12,7 @@ public class UpdateNotifyListener implements Listener {
     @EventHandler
     public void onAdminLogin(PlayerJoinEvent event) {
         Bukkit.getScheduler().runTaskAsynchronously(Wayback.instance(), () -> {
-            if (WaybackUpdater.isOutdated() && (event.getPlayer().isOp() || event.getPlayer().hasPermission("wayback.updateNotify"))) {
+            if (WaybackUpdater.isOutdated() && event.getPlayer().hasPermission("wayback.updateNotify")) {
                 event.getPlayer().sendMessage(WaybackUpdater.getUpdateMsg());
             }
         });
