@@ -202,7 +202,7 @@ public class RollbackTask implements Task, ConfigurationSerializable {
                                 }));
                     });
 
-            TLocale.sendToConsole("LOGO", Wayback.instance().getDescription().getVersion());
+            TLocale.sendToConsole("ROLLBACK.SUCCESS");
             Stats.increaseRecovery();
             Runtime.getRuntime().halt(0);
         }
