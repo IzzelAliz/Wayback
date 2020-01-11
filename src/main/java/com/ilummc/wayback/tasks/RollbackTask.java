@@ -26,16 +26,39 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 public class RollbackTask implements Task, ConfigurationSerializable {
+
+    //Sync Task for rollback
+    private volatile static Runnable syncTaskList;
+    private volatile static CountDownLatch countDownLatch;
 
     private List<String> from;
 
     private String to;
 
     private Reference<String> detail = Reference.of("AWAIT_RUN");
+
+    private static void syncTask(Runnable runnable) throws InterruptedException {
+        syncTaskList = runnable;
+        countDownLatch = new CountDownLatch(1);
+        countDownLatch.await();
+    }
+
+    synchronized public static void executeSyncTask() {
+        if (syncTaskList != null && countDownLatch != null) {
+            try {
+                syncTaskList.run();
+            } catch (Exception ignored) {
+
+            } finally {
+                countDownLatch.countDown();
+            }
+        }
+    }
 
     @Override
     public Executable create() {
@@ -94,26 +117,31 @@ public class RollbackTask implements Task, ConfigurationSerializable {
 
             // unload all worlds to unlock map data files
             TLocale.sendToConsole("ROLLBACK.PREPARE_DISABLE_WORLDS");
-            Bukkit.getWorlds().forEach(world -> {
-                try {
-                    Method getHandle = world.getClass().getDeclaredMethod("getHandle");
-                    getHandle.setAccessible(true);
-                    Object worldServer = getHandle.invoke(world);
-                    Field dimensionF = worldServer.getClass().getDeclaredField("dimension");
-                    int dimension = ((int) dimensionF.get(worldServer));
-                    if (dimension <= 1)
-                        TLocale.Logger.warn("ROLLBACK.UNUNLOADABLE_WORLD", world.getName());
-                } catch (Exception ignored) {
-                }
-                Bukkit.unloadWorld(world, true);
-            });
+            RollbackTask.syncTask(() ->
+                    Bukkit.getWorlds().forEach(world -> {
+                        try {
+                            Method getHandle = world.getClass().getDeclaredMethod("getHandle");
+                            getHandle.setAccessible(true);
+                            Object worldServer = getHandle.invoke(world);
+                            Field dimensionF = worldServer.getClass().getDeclaredField("dimension");
+                            int dimension = ((int) dimensionF.get(worldServer));
+                            if (dimension <= 1)
+                                TLocale.Logger.warn("ROLLBACK.UNUNLOADABLE_WORLD", world.getName());
+                        } catch (Exception ignored) {
+                        }
+                        Bukkit.unloadWorld(world, true);
+                    }));
 
             // disable plugins
             TLocale.sendToConsole("ROLLBACK.PREPARE_DISABLE_PLUGINS");
-            for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
-                if (plugin != Wayback.instance())
-                    Bukkit.getPluginManager().disablePlugin(plugin);
-            }
+            RollbackTask.syncTask(() ->
+                    {
+                        for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
+                            if (plugin != Wayback.instance())
+                                Bukkit.getPluginManager().disablePlugin(plugin);
+                        }
+                    }
+            );
 
             // stop the world :D
             Thread.getAllStackTraces().keySet().stream()
@@ -174,9 +202,9 @@ public class RollbackTask implements Task, ConfigurationSerializable {
                                 }));
                     });
 
-            TLocale.sendToConsole("LOGO", Wayback.instance().getDescription().getVersion());
+            TLocale.sendToConsole("ROLLBACK.SUCCESS");
             Stats.increaseRecovery();
-            System.exit(0);
+            Runtime.getRuntime().halt(0);
         }
 
         @SuppressWarnings("unchecked")

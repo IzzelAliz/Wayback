@@ -72,6 +72,7 @@ FTP:
   NO_PERMISSION: '指定的目录没有权限进行读写！FTP 将不可用'
   UPLOADING_FILE: '正在上传 {0} {1} / {2}'
 ROLLBACK:
+  SUCCESS: '&a回滚完成！'
   AWAIT_RUN: '等待服务器准备完成后运行'
   COLLECT: '正在统计文件'
   DELETE: '正在删除新增文件'
