@@ -4,6 +4,7 @@ import com.ilummc.wayback.backups.FileBackup;
 import com.ilummc.wayback.backups.SqlBackup;
 import com.ilummc.wayback.cmd.CommandRegistry;
 import com.ilummc.wayback.compress.ZipCompressor;
+import com.ilummc.wayback.listener.UpdateNotifyListener;
 import com.ilummc.wayback.policy.AbandonPolicy;
 import com.ilummc.wayback.policy.CleanLatestPolicy;
 import com.ilummc.wayback.policy.CleanOldestPolicy;
@@ -14,7 +15,9 @@ import com.ilummc.wayback.storage.LocalStorage;
 import com.ilummc.wayback.tasks.RollbackTask;
 import com.ilummc.wayback.tasks.TransferTask;
 import io.izzel.taboolib.module.locale.TLocale;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.event.HandlerList;
 
 import static com.ilummc.wayback.Wayback.instance;
 
@@ -28,7 +31,7 @@ final class DelegatedWayback {
         CommandRegistry.register(new WaybackCommand());
         Environment.check();
         Stats.init();
-
+        Bukkit.getServer().getPluginManager().registerEvents(new UpdateNotifyListener(), instance());
         new Metrics(instance());
         if (!instance().getConfig().isSet("checkUpdate")) {
             instance().getConfig().set("checkUpdate", true);
@@ -61,6 +64,7 @@ final class DelegatedWayback {
     static void onDisable() {
         TLocale.sendToConsole("LOGO", instance().getDescription().getVersion());
         try {
+            HandlerList.unregisterAll(instance());
             Wayback.getSchedules().shutdown();
         } catch (InterruptedException e) {
             TLocale.Logger.error("TERMINATE_ERROR");
