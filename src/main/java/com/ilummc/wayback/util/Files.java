@@ -29,6 +29,10 @@ public class Files {
         }
     }
 
+    public static void append(String content, File target, Charset charset) {
+        write(read(target, charset) + "\n" + content, target, charset);
+    }
+
     public static void write(String content, File target, Charset charset) {
         try {
             java.nio.file.Files.write(target.toPath(), content.getBytes(charset));

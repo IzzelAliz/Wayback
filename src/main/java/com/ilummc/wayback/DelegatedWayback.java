@@ -14,10 +14,14 @@ import com.ilummc.wayback.storage.FtpStorage;
 import com.ilummc.wayback.storage.LocalStorage;
 import com.ilummc.wayback.tasks.RollbackTask;
 import com.ilummc.wayback.tasks.TransferTask;
+import com.ilummc.wayback.util.Files;
 import io.izzel.taboolib.module.locale.TLocale;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.event.HandlerList;
+
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 
 import static com.ilummc.wayback.Wayback.instance;
 
@@ -35,7 +39,7 @@ final class DelegatedWayback {
         new Metrics(instance());
         if (!instance().getConfig().isSet("checkUpdate")) {
             instance().getConfig().set("checkUpdate", true);
-            instance().saveConfig();
+            Files.append("checkUpdate: true", Paths.get(instance().getDataFolder().toString(), "config.yml").toFile(), StandardCharsets.UTF_8);
         }
         if (instance().getConfig().getBoolean("checkUpdate")) {
             WaybackUpdater.start();

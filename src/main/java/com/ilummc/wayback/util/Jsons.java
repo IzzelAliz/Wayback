@@ -9,7 +9,7 @@ import java.util.Map;
 public class Jsons {
 
     private static Gson gson = new Gson();
-    private static JsonParser jsonParser = getJsonParser();
+    private static JsonParser jsonParser = new JsonParser();
 
     public static JsonParser getJsonParser() {
         return jsonParser;

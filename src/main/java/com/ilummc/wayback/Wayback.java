@@ -11,6 +11,8 @@ import org.bukkit.Bukkit;
 //@Dependency(type = Dependency.Type.LIBRARY, maven = "net.sf.sevenzipjbinding:sevenzipjbinding:9.20-2.00beta")
 //@Dependency(type = Dependency.Type.LIBRARY, maven = "net.sf.sevenzipjbinding:sevenzipjbinding-all-platforms:9.20-2.00beta")
 @Dependency(maven = "commons-collections:commons-collections:3.2.2")
+@Dependency(maven = "org.codehaus.jackson:jackson-core-asl:1.9.13")
+@Dependency(maven = "org.codehaus.jackson:jackson-mapper-asl:1.9.13")
 @Dependency(maven = "net.lingala.zip4j:zip4j:1.3.2")
 public final class Wayback extends WaybackLibLoader {
 
