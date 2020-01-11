@@ -1,10 +1,9 @@
 package com.ilummc.wayback.storage;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.ilummc.tlib.resources.TLocale;
 import com.ilummc.wayback.data.Breakpoint;
 import com.ilummc.wayback.util.Jsons;
+import io.izzel.taboolib.module.locale.TLocale;
 import it.sauronsoftware.ftp4j.FTPClient;
 import it.sauronsoftware.ftp4j.FTPException;
 import it.sauronsoftware.ftp4j.FTPIllegalReplyException;

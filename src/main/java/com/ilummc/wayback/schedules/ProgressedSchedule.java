@@ -4,8 +4,6 @@ import com.ilummc.wayback.WaybackException;
 import com.ilummc.wayback.tasks.Executable;
 
 import java.util.Objects;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 public abstract class ProgressedSchedule implements Runnable {
 

@@ -1,4 +1,5 @@
 # 推荐开启，关掉这玩意儿会让作者很受打击，开开这玩意儿不会影响你啥
+# 注：这是bstat的统计信息，统计并上传恢复数和备份数，可禁止
 enable: true
 backup_count: 0
 recovery_count: 0

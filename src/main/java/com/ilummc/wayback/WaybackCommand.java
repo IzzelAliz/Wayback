@@ -1,11 +1,11 @@
 package com.ilummc.wayback;
 
-import com.ilummc.tlib.resources.TLocale;
 import com.ilummc.wayback.cmd.Handler;
 import com.ilummc.wayback.schedules.DelayedSchedule;
 import com.ilummc.wayback.schedules.PeriodSchedule;
 import com.ilummc.wayback.schedules.WaybackSchedules;
 import com.ilummc.wayback.util.Reference;
+import io.izzel.taboolib.module.locale.TLocale;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
@@ -19,6 +19,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Comparator;
 import java.util.Optional;
+
+import static com.ilummc.wayback.Wayback.getSchedules;
 
 public class WaybackCommand {
 
@@ -54,24 +56,35 @@ public class WaybackCommand {
     @Handler(value = "task", descriptor = "COMMANDS.TASK_USAGE", permission = "wayback.task")
     private static void task(String[] arg, CommandSender sender) {
         if (arg.length == 0) throw new NullPointerException(TLocale.asString("COMMANDS.ILLEGAL_ARGUMENT"));
-        else switch (arg[0]) {
-            case "list":
-                TLocale.sendTo(sender, "TASKS.LIST", String.valueOf(WaybackConf.getConf().getPoolSize()));
-                printRunning();
-                WaybackSchedules.instance().getPending().stream()
-                        .filter(task -> !task.isRunning()).forEach(task -> {
-                    if (task instanceof DelayedSchedule) TLocale.sendTo(sender, "TASKS.DELAYING_TASK_FORMAT",
-                            task.id(), task.name(), ((DelayedSchedule) task).timeToRun());
-                    else if (task instanceof PeriodSchedule) {
-                        if (((PeriodSchedule) task).getLastRun() != 0)
-                            TLocale.sendTo(sender, "TASKS.PERIOD_TASK_FORMAT",
-                                    task.id(), task.name(), ((PeriodSchedule) task).timeToRun(), ((PeriodSchedule) task).lastRun());
-                        else TLocale.sendTo(sender, "TASKS.PERIOD_TASK_FORMAT2",
-                                task.id(), task.name(), ((PeriodSchedule) task).timeToRun());
-                    } else TLocale.sendTo(sender, "TASKS.PENDING_TASK_FORMAT", task.id(), task.name());
-                });
-                break;
-            default:
+        else if ("list".equalsIgnoreCase(arg[0])) {
+            TLocale.sendTo(sender, "TASKS.LIST", String.valueOf(WaybackConf.getConf().getPoolSize()));
+            printRunning();
+            WaybackSchedules.instance().getPending().stream()
+                    .filter(task -> !task.isRunning()).forEach(task -> {
+                if (task instanceof DelayedSchedule) TLocale.sendTo(sender, "TASKS.DELAYING_TASK_FORMAT",
+                        task.id(), task.name(), ((DelayedSchedule) task).timeToRun());
+                else if (task instanceof PeriodSchedule) {
+                    if (((PeriodSchedule) task).getLastRun() != 0)
+                        TLocale.sendTo(sender, "TASKS.PERIOD_TASK_FORMAT",
+                                task.id(), task.name(), ((PeriodSchedule) task).timeToRun(), ((PeriodSchedule) task).lastRun());
+                    else TLocale.sendTo(sender, "TASKS.PERIOD_TASK_FORMAT2",
+                            task.id(), task.name(), ((PeriodSchedule) task).timeToRun());
+                } else TLocale.sendTo(sender, "TASKS.PENDING_TASK_FORMAT", task.id(), task.name());
+            });
+        }
+    }
+
+
+    @Handler(value = "reload", descriptor = "COMMANDS.RELOAD", permission = "wayback.reload")
+    private static void reload(String[] arg, CommandSender sender) {
+        if (getSchedules().getRunning().size() > 0) {
+            TLocale.sendTo(sender, "RELOAD_TASK_RUNNING");
+            return;
+        }
+        if (Wayback.reload()) {
+            TLocale.sendTo(sender, "RELOAD_SUCCESS");
+        } else {
+            TLocale.sendTo(sender, "RELOAD_FAILED");
         }
     }
 
@@ -129,8 +142,7 @@ public class WaybackCommand {
             WaybackConf.getConf().getStorages().values().stream()
                     .map(storage -> storage.findNearest(time))
                     .filter(Optional::isPresent).map(Optional::get)
-                    .min((o1, o2) -> ((int) Math.abs(time.toEpochSecond(ZoneOffset.MIN) - o1.getTime().toEpochSecond(ZoneOffset.MIN))
-                            - ((int) Math.abs(time.toEpochSecond(ZoneOffset.MIN) - o2.getTime().toEpochSecond(ZoneOffset.MIN)))))
+                    .min(Comparator.comparingInt(o -> (int) Math.abs(time.toEpochSecond(ZoneOffset.MIN) - o.getTime().toEpochSecond(ZoneOffset.MIN))))
                     .ifPresent(breakpoint -> {
                         WaybackCommand.time.setValue(breakpoint.getTime());
                         TLocale.sendTo(sender, "COMMANDS.CONFIRM_BACKUP", breakpoint.getTime().toString());

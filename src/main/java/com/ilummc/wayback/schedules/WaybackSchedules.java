@@ -3,9 +3,9 @@ package com.ilummc.wayback.schedules;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.ilummc.tlib.resources.TLocale;
 import com.ilummc.wayback.WaybackCommand;
 import com.ilummc.wayback.WaybackConf;
+import io.izzel.taboolib.module.locale.TLocale;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -39,6 +39,9 @@ public class WaybackSchedules {
         return executor.getRunning();
     }
 
+    public static void renew() {
+        WaybackTasksHolder.renew();
+    }
     void execute(ProgressedSchedule task) {
         executor.execute(task);
     }
@@ -138,6 +141,12 @@ public class WaybackSchedules {
 
     private static final class WaybackTasksHolder {
         private static WaybackSchedules instance = new WaybackSchedules();
+
+        public static void renew() {
+            synchronized (WaybackTasksHolder.class) {
+                instance = new WaybackSchedules();
+            }
+        }
     }
 
 }

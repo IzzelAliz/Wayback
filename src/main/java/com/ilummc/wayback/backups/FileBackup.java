@@ -2,10 +2,8 @@ package com.ilummc.wayback.backups;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.stream.JsonWriter;
-import com.ilummc.tlib.util.Strings;
 import com.ilummc.wayback.util.Hash;
 import com.ilummc.wayback.util.Jsons;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -14,9 +12,12 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.*;
-import java.text.MessageFormat;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
+
+import static com.ilummc.wayback.util.Jsons.getJsonParser;
+
 
 @SerializableAs("File")
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -64,7 +65,7 @@ public class FileBackup implements ConfigurationSerializable, Backup {
     public JsonObject makeFileInfo() {
         File base = getBase();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        try (JsonWriter writer = new JsonWriter(new OutputStreamWriter(out, "utf-8"))) {
+        try (JsonWriter writer = new JsonWriter(new OutputStreamWriter(out, StandardCharsets.UTF_8))) {
             writer.beginObject();
             File[] list = base.listFiles();
             if (list != null) {
@@ -80,7 +81,7 @@ public class FileBackup implements ConfigurationSerializable, Backup {
             }
             writer.endObject();
             writer.flush();
-            return new JsonParser().parse(out.toString("utf-8")).getAsJsonObject();
+            return getJsonParser().parse(out.toString("utf-8")).getAsJsonObject();
         } catch (IOException e) {
             return new JsonObject();
         }

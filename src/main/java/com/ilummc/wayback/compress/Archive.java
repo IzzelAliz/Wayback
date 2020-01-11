@@ -1,7 +1,6 @@
 package com.ilummc.wayback.compress;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 

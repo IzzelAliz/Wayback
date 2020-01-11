@@ -1,16 +1,14 @@
 package com.ilummc.wayback.data;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,7 +62,7 @@ public class Breakpoint {
     }
 
     public void writeTo(File file) throws IOException {
-        com.google.common.io.Files.write(new GsonBuilder().disableHtmlEscaping().create().toJson(this).getBytes(StandardCharsets.UTF_8), file);
+        Files.write(file.toPath(), new GsonBuilder().disableHtmlEscaping().create().toJson(this).getBytes(StandardCharsets.UTF_8));
     }
 
     public boolean isIncremental() {

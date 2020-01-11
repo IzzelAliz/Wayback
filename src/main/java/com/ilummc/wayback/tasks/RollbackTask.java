@@ -1,7 +1,6 @@
 package com.ilummc.wayback.tasks;
 
 import com.google.common.collect.ImmutableMap;
-import com.ilummc.tlib.resources.TLocale;
 import com.ilummc.wayback.Stats;
 import com.ilummc.wayback.Wayback;
 import com.ilummc.wayback.WaybackConf;
@@ -13,7 +12,7 @@ import com.ilummc.wayback.storage.LocalStorage;
 import com.ilummc.wayback.storage.Storage;
 import com.ilummc.wayback.util.Jsons;
 import com.ilummc.wayback.util.Reference;
-import me.skymc.taboolib.Main;
+import io.izzel.taboolib.module.locale.TLocale;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -112,7 +111,7 @@ public class RollbackTask implements Task, ConfigurationSerializable {
             // disable plugins
             TLocale.sendToConsole("ROLLBACK.PREPARE_DISABLE_PLUGINS");
             for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
-                if (plugin != Wayback.instance() && plugin != Main.getInst())
+                if (plugin != Wayback.instance())
                     Bukkit.getPluginManager().disablePlugin(plugin);
             }
 
