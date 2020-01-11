@@ -21,6 +21,7 @@ import java.util.Comparator;
 import java.util.Optional;
 
 import static com.ilummc.wayback.Wayback.getSchedules;
+import static com.ilummc.wayback.tasks.RollbackTask.executeSyncTask;
 
 public class WaybackCommand {
 
@@ -117,11 +118,13 @@ public class WaybackCommand {
                     .forEach(player -> player.kickPlayer(TLocale.asString("ROLLBACK.KICK_ROLLBACK")));
 
             WaybackConf.getConf().getRollback().create(time.getValue()).schedule().addToQueue();
-            while (true)
+            while (true) {
                 try {
+                    executeSyncTask();
                     Thread.sleep(50);
                 } catch (Throwable ignored) {
                 }
+            }
         } else {
             String[] split = arg[0].split("\\.");
             LocalDateTime time;

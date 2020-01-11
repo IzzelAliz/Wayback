@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 public class WaybackSchedules {
 
     private static final AtomicInteger COUNTER = new AtomicInteger(1);
-
     public static int nextId() {
         return COUNTER.getAndIncrement();
     }
