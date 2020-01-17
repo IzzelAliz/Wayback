@@ -1,5 +1,6 @@
 package com.ilummc.wayback;
 
+import com.ilummc.wayback.cmd.WaybackTabCompleter;
 import com.ilummc.wayback.schedules.WaybackSchedules;
 import io.izzel.taboolib.module.dependency.Dependency;
 import io.izzel.taboolib.module.locale.TLocale;
@@ -74,6 +75,7 @@ public final class Wayback extends WaybackLibLoader {
         if (!loaded)
             try {
                 DelegatedWayback.onEnable();
+                getCommand("wayback").setTabCompleter(new WaybackTabCompleter());
                 loaded = true;
             } catch (Throwable t) {
                 TLocale.Logger.fatal("ERR_LOAD_WAYBACK");
