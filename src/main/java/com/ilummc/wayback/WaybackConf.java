@@ -110,7 +110,7 @@ public class WaybackConf {
         return conf;
     }
 
-    static void unencrypt(CommandSender sender) {
+    static void decrypt(CommandSender sender) {
         if (!getConf().encrypted) throw new NullPointerException(TLocale.asString("COMMANDS.NOT_ENCRYPTED"));
         else {
             try {

@@ -29,9 +29,9 @@ public class WaybackCommand {
     private static void conf(String[] arg, CommandSender sender) {
         if (arg.length == 0) throw new NullPointerException(TLocale.asString("COMMANDS.ILLEGAL_ARGUMENT"));
         else switch (arg[0]) {
-            case "unencrypt":
-            case "unenc":
-                WaybackConf.unencrypt(sender);
+            case "decrypt":
+            case "dec":
+                WaybackConf.decrypt(sender);
                 break;
             case "enc":
             case "encrypt":
