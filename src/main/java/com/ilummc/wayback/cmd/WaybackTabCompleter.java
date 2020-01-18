@@ -14,19 +14,25 @@ public class WaybackTabCompleter implements TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         switch (args.length) {
-            case 1:
-            {
-                return Arrays.asList("conf","task","reload","debug","rollback");
+            case 1: {
+                return Arrays.asList("conf", "task", "reload", "debug", "rollback");
             }
             case 2: {
-                List<String> rollbackList = new ArrayList<>();
-                if (args[0].equalsIgnoreCase("rollback"))
+                if (args[0].equalsIgnoreCase("rollback")) {
+                    List<String> rollbackList = new ArrayList<>();
+                    rollbackList.add("list");
                     WaybackConf.getConf().getStorages().values().stream()
                             .flatMap(storage -> storage.listAvailable().stream())
                             .sorted(Comparator.reverseOrder()).forEach(time -> rollbackList.add(time.toString()));
-                return rollbackList;
+                    return rollbackList;
+                }
+                if (args[0].equalsIgnoreCase("conf"))
+                    return Arrays.asList("decrypt", "encrypt", "setup");
+                if (args[0].equalsIgnoreCase("task"))
+                    return Arrays.asList("list");
             }
+            default:
+                return null;
         }
-        return null;
     }
 }

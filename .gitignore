@@ -1,6 +1,6 @@
 # Created by .ignore support plugin (hsz.mobi)
 .gradle/
-.idea/workspace.xml
+.idea/
 build/
 out/
 src/test/
